@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Master — Ultra-Luxury Campaign Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A96E;--deep:#0A0A0F;--surface2:#1A1A24;--border:rgba(201,169,110,0.2);--border-strong:rgba(201,169,110,0.45);--text:#F0EAE0;--muted:rgba(240,234,224,0.5);--faint:rgba(240,234,224,0.22);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--deep);color:var(--text);font-family:'Montserrat',sans-serif;min-height:100vh;}
+header{padding:1.5rem 2.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1.2rem;}
+.logo-cube{width:40px;height:40px;border:1.5px solid var(--gold);position:relative;flex-shrink:0;}
+.logo-cube::after{content:'';position:absolute;width:20px;height:20px;border:1.5px solid var(--gold);top:5px;left:5px;}
+.logo-text .brand{font-size:13px;font-weight:600;letter-spacing:3px;color:var(--gold);}
+.logo-text .tag{font-size:7px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:2px;}
+.header-pill{margin-left:auto;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);border:1px solid var(--border);padding:4px 12px;}
+.stepper{display:flex;align-items:center;padding:1.2rem 2.5rem;border-bottom:1px solid var(--border);}
+.step{display:flex;align-items:center;gap:10px;opacity:0.38;transition:opacity 0.3s;}
+.step.active,.step.done{opacity:1;}
+.step-num{width:28px;height:28px;border:1px solid var(--border-strong);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);flex-shrink:0;}
+.step.done .step-num{background:var(--gold);color:var(--deep);}
+.step-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+.step-line{flex:1;height:1px;background:var(--border);margin:0 12px;}
+.panel{display:none;max-width:800px;margin:0 auto;padding:3rem 2rem;}
+.panel.active{display:block;}
+.panel-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;margin-bottom:0.3rem;}
+.panel-title span{color:var(--gold);font-style:italic;}
+.panel-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:2.5rem;}
+.api-box{background:var(--surface2);border:1px solid var(--border);padding:1.5rem;margin-bottom:2rem;}
+.api-row{display:flex;gap:10px;align-items:stretch;margin-top:7px;}
+.api-row input{flex:1;}
+.api-note{font-size:9px;color:var(--muted);margin-top:8px;line-height:1.7;}
+.api-note a{color:var(--gold);text-decoration:none;}
+.verify-ok{color:#5ecb8a;font-size:10px;margin-top:8px;display:none;padding:8px 12px;background:rgba(94,203,138,0.08);border:1px solid rgba(94,203,138,0.25);}
+.verify-fail{color:#e06060;font-size:10px;margin-top:8px;display:none;padding:8px 12px;background:rgba(224,96,96,0.08);border:1px solid rgba(224,96,96,0.25);line-height:1.7;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.5rem;}
+.fg{display:flex;flex-direction:column;gap:7px;}
+.fg.full{grid-column:1/-1;}
+label{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);}
+input,select,textarea{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:11px 14px;font-family:'Montserrat',sans-serif;font-size:12px;outline:none;transition:border-color 0.2s;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);}
+select option{background:var(--surface2);}
+textarea{resize:vertical;min-height:70px;}
+.upload-zone{border:1px dashed var(--border);padding:1.5rem;text-align:center;cursor:pointer;background:var(--surface2);position:relative;transition:border-color 0.2s;}
+.upload-zone:hover{border-color:var(--gold);}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+#img-preview{max-height:90px;margin:8px auto 0;display:none;}
+.or-div{text-align:center;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--faint);margin:1rem 0;}
+.btn-gold{padding:13px 22px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all 0.25s;display:inline-block;}
+.btn-gold:hover{background:var(--gold);color:var(--deep);}
+.btn-gold:disabled{opacity:0.38;cursor:not-allowed;}
+.btn-gold.full{width:100%;text-align:center;}
+.btn-ghost{padding:10px 18px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.ai-status{background:var(--surface2);border:1px solid var(--border);padding:1.5rem;margin-bottom:1.5rem;}
+.status-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 1.2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.35;transform:scale(0.75);}}
+.status-txt{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+.ai-log{font-size:11px;color:var(--muted);line-height:1.9;max-height:140px;overflow-y:auto;}
+.camps-grid{display:flex;flex-direction:column;gap:1.4rem;margin-bottom:2rem;}
+.camp-card{background:var(--surface2);border:1px solid var(--border);padding:1.5rem;}
+.camp-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+.camp-nm{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);}
+.camp-hl{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;margin-bottom:0.4rem;line-height:1.3;}
+.camp-sl{font-size:11px;color:var(--muted);margin-bottom:0.6rem;}
+.camp-cta-badge{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);border:1px solid var(--border);padding:4px 10px;display:inline-block;}
+.camp-edit-area{display:flex;flex-direction:column;gap:7px;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);}
+.tab-row{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.5rem;}
+.tab{padding:10px 20px;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.sizes-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
+.ad-wrap .ad-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.ad-wrap canvas{display:block;width:100%;border:1px solid var(--border);}
+.dl-btn{display:block;width:100%;margin-top:8px;padding:9px;background:transparent;border:1px solid var(--border);color:var(--gold);font-family:'Montserrat',sans-serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;text-align:center;transition:all 0.2s;}
+.dl-btn:hover{background:var(--gold);color:var(--deep);}
+.dl-all-row{text-align:right;margin-bottom:1rem;}
+.gold-div{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:2.5rem 0;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-cube"></div>
+  <div class="logo-text"><div class="brand">PROPERTY MASTER</div><div class="tag">Personal · Professional · Prompt</div></div>
+  <div class="header-pill">Ultra-Luxury Campaign Studio</div>
+</header>
+<div class="stepper">
+  <div class="step active" id="s1"><div class="step-num">01</div><div class="step-label">Project Details</div></div>
+  <div class="step-line"></div>
+  <div class="step" id="s2"><div class="step-num">02</div><div class="step-label">AI Campaigns</div></div>
+  <div class="step-line"></div>
+  <div class="step" id="s3"><div class="step-num">03</div><div class="step-label">Review & Edit</div></div>
+  <div class="step-line"></div>
+  <div class="step" id="s4"><div class="step-num">04</div><div class="step-label">Download Ads</div></div>
+</div>
+
+<!-- STEP 1 -->
+<div class="panel active" id="panel1">
+  <div class="panel-title">Project <span>Intelligence</span></div>
+  <p class="panel-sub">Enter details — AI generates your HNI campaigns</p>
+
+  <div class="api-box">
+    <label>Gemini API Key</label>
+    <div class="api-row">
+      <input type="password" id="api-key" placeholder="AIzaSy..." />
+      <button class="btn-ghost" onclick="verifyKey()">Verify</button>
+    </div>
+    <div class="verify-ok" id="verify-ok">✓ Key verified — ready to generate</div>
+    <div class="verify-fail" id="verify-fail"></div>
+    <p class="api-note">Get free key: <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Sign in with Google → Get API Key → Create → Copy</p>
+  </div>
+
+  <div class="form-grid">
+    <div class="fg"><label>Project Name *</label><input id="f-project" type="text" placeholder="ANUSHREE GREENS"/></div>
+    <div class="fg"><label>Location *</label><input id="f-location" type="text" placeholder="Sector 21C, Faridabad"/></div>
+    <div class="fg"><label>Asset Type</label>
+      <select id="f-asset"><option>Residential Plots</option><option>Ultra-Luxury Apartments</option><option>Independent Floors</option><option>Villas</option><option>Penthouses</option><option>Commercial Spaces</option></select>
+    </div>
+    <div class="fg"><label>Price *</label><input id="f-price" type="text" placeholder="Starts @ ₹1 Cr*"/></div>
+    <div class="fg"><label>City</label>
+      <select id="f-city"><option>Faridabad</option><option>Gurugram</option><option>Both</option></select>
+    </div>
+    <div class="fg"><label>Key USP</label><input id="f-usp" type="text" placeholder="RERA Approved | 200+ Sq. Yd."/></div>
+    <div class="fg full"><label>Target Audience</label><input id="f-audience" type="text" placeholder="HNIs, NRIs, CXOs, Family Offices"/></div>
+    <div class="fg full"><label>Additional Notes for AI</label><textarea id="f-notes" placeholder="Nearby landmarks, developer info, special offer..."></textarea></div>
+  </div>
+
+  <div class="gold-div"></div>
+  <p class="panel-sub" style="margin-bottom:1rem;">Project Visual</p>
+  <div class="fg full" style="margin-bottom:1rem;">
+    <label>Upload Project Photo</label>
+    <div class="upload-zone">
+      <input type="file" accept="image/*" id="img-upload" onchange="handleImg(event)"/>
+      <div style="font-size:18px;color:var(--gold);margin-bottom:6px;">+</div>
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Click or drag to upload</div>
+      <img id="img-preview" src=""/>
+    </div>
+  </div>
+  <div class="or-div">— or describe the visual —</div>
+  <div class="fg full" style="margin-bottom:2rem;">
+    <label>Visual Direction</label>
+    <textarea id="f-visual" placeholder="e.g. Aerial view of premium plotted colony at golden hour, wide tree-lined roads..."></textarea>
+  </div>
+  <button class="btn-gold full" onclick="generateCampaigns()">✦ &nbsp; Generate AI Campaigns &nbsp; ✦</button>
+</div>
+
+<!-- STEP 2 -->
+<div class="panel" id="panel2">
+  <div class="panel-title">AI <span>Thinking</span></div>
+  <p class="panel-sub">Crafting your investment-grade campaigns</p>
+  <div class="ai-status">
+    <div class="status-row"><div class="dot"></div><div class="status-txt" id="status-txt">Initialising...</div></div>
+    <div class="ai-log" id="ai-log"></div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="panel" id="panel3">
+  <div class="panel-title">Review & <span>Refine</span></div>
+  <p class="panel-sub">3 HNI campaigns ready · Edit before rendering</p>
+  <div class="camps-grid" id="camps-grid"></div>
+  <div style="display:flex;gap:1rem;justify-content:flex-end;">
+    <button class="btn-ghost" onclick="goStep(1)">← Back</button>
+    <button class="btn-gold" onclick="renderAds()">Render 9 Creatives →</button>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="panel" id="panel4">
+  <div class="panel-title">Download <span>Creatives</span></div>
+  <p class="panel-sub">9 PNG files · Ready for Facebook Ads Manager</p>
+  <div class="dl-all-row"><button class="btn-gold" onclick="dlAll()">↓ &nbsp; Download All 9</button></div>
+  <div class="tab-row" id="tab-row"></div>
+  <div id="tab-panels"></div>
+  <div class="gold-div"></div>
+  <div style="display:flex;gap:1rem;">
+    <button class="btn-ghost" onclick="goStep(1)">New Campaign</button>
+    <button class="btn-ghost" onclick="goStep(3)">← Edit Copy</button>
+  </div>
+</div>
+
+<script>
+let uploadedImage=null,campaigns=[],proj={};
+const SIZES=[{label:'1080×1080',w:1080,h:1080},{label:'1080×1350',w:1080,h:1350},{label:'1080×1920',w:1080,h:1920}];
+const CDEFS=[
+  {id:'legacy',name:'Legacy Wealth',accent:'#C9A96E',bg1:'#0A0A0F',bg2:'#1B1408'},
+  {id:'invest',name:'Investment Authority',accent:'#E0CFA0',bg1:'#070C10',bg2:'#0D1720'},
+  {id:'elite',name:'Elite Lifestyle',accent:'#D4AF7A',bg1:'#100808',bg2:'#1C0F0A'},
+];
+
+function goStep(n){
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('panel'+i).classList.toggle('active',i===n);
+    const s=document.getElementById('s'+i);
+    s.classList.toggle('active',i===n);
+    i<n?s.classList.add('done'):s.classList.remove('done');
+  });
+  window.scrollTo(0,0);
+}
+
+function handleImg(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{uploadedImage=ev.target.result;const img=document.getElementById('img-preview');img.src=uploadedImage;img.style.display='block';};
+  r.readAsDataURL(f);
+}
+
+// Use allorigins.win as CORS proxy — works from any browser, any host
+async function callGemini(apiKey, prompt){
+  const geminiUrl=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  const body=JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.85,maxOutputTokens:1500}});
+
+  // Try direct first (works when hosted properly)
+  try {
+    const res=await fetch(geminiUrl,{method:'POST',headers:{'Content-Type':'application/json'},body,signal:AbortSignal.timeout(15000)});
+    if(res.ok){const d=await res.json();return d.candidates[0].content.parts[0].text;}
+    const err=await res.json();
+    if(res.status===400) throw new Error('INVALID_KEY');
+    if(res.status===403) throw new Error('NOT_ENABLED');
+    if(res.status===429) throw new Error('RATE_LIMIT');
+    throw new Error(err.error?.message||'API error');
+  } catch(e) {
+    if(e.message==='INVALID_KEY') throw new Error('Invalid API key — please check you copied it correctly from aistudio.google.com');
+    if(e.message==='NOT_ENABLED') throw new Error('API not enabled. Go to console.cloud.google.com and enable "Generative Language API"');
+    if(e.message==='RATE_LIMIT') throw new Error('Rate limit hit — wait 1 minute and try again');
+    // If direct fails due to CORS, try via proxy
+    if(e.name==='TypeError'||e.name==='AbortError'||e.message.includes('fetch')){
+      return await callViaProxy(geminiUrl, body);
+    }
+    throw e;
+  }
+}
+
+async function callViaProxy(targetUrl, body){
+  // corsproxy.io — free, reliable CORS proxy
+  const proxyUrl=`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+  const res=await fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/json'},body});
+  if(!res.ok){
+    const txt=await res.text();
+    throw new Error('Proxy error: '+txt.substring(0,100));
+  }
+  const d=await res.json();
+  if(d.error) throw new Error(d.error.message||'Gemini error');
+  return d.candidates[0].content.parts[0].text;
+}
+
+async function verifyKey(){
+  const key=document.getElementById('api-key').value.trim();
+  const ok=document.getElementById('verify-ok');
+  const fail=document.getElementById('verify-fail');
+  ok.style.display='none';fail.style.display='none';
+  if(!key){alert('Please enter your API key first.');return;}
+  fail.textContent='Verifying...';fail.style.display='block';fail.style.color='var(--muted)';
+  try{
+    await callGemini(key,'Reply with one word: verified');
+    ok.style.display='block';fail.style.display='none';
+  }catch(e){
+    fail.style.color='#e06060';
+    fail.innerHTML='✗ '+e.message+'<br><br><strong>Steps to fix:</strong><br>1. Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--gold)">aistudio.google.com</a><br>2. Delete old key → Create new key<br>3. Copy the FULL key starting with AIzaSy...<br>4. Paste it here and try again';
+  }
+}
+
+async function generateCampaigns(){
+  const key=document.getElementById('api-key').value.trim();
+  if(!key){alert('Please enter your Gemini API key first.');return;}
+  proj={
+    project:document.getElementById('f-project').value.trim()||'LUXURY RESIDENCES',
+    location:document.getElementById('f-location').value.trim()||'Premium Location',
+    asset:document.getElementById('f-asset').value,
+    price:document.getElementById('f-price').value.trim()||'Price on Request',
+    city:document.getElementById('f-city').value,
+    usp:document.getElementById('f-usp').value.trim(),
+    audience:document.getElementById('f-audience').value.trim()||'HNIs, CXOs, NRIs',
+    notes:document.getElementById('f-notes').value.trim(),
+  };
+  if(!proj.project||!proj.location||!proj.price){alert('Please fill Project Name, Location and Price.');return;}
+  goStep(2);
+  setStatus('Connecting to Gemini AI...');
+  log('Project: '+proj.project+' | '+proj.location);
+
+  const prompt=`You are Property Master Ultra-Luxury Creative Studio. Brand voice: Quietly expensive. Calm. Powerful. Think Christie's Real Estate, Sotheby's Realty.
+
+PROJECT: ${proj.project} | ${proj.location}, ${proj.city} | ${proj.asset} | ${proj.price} | USP: ${proj.usp||'Premium'} | Audience: ${proj.audience} | Notes: ${proj.notes||'none'}
+
+Create 3 ultra-luxury Facebook ad campaigns for HNIs/NRIs. Return ONLY raw JSON no markdown:
+{"campaigns":[{"id":"legacy","name":"Legacy Wealth","mood":"Timeless generational","headline":"MAX 5 WORDS CAPS","subheadline":"max 10 words","body":"One HNI-focused sentence.","cta":"2-3 WORDS"},{"id":"invest","name":"Investment Authority","mood":"Capital credibility","headline":"MAX 5 WORDS CAPS","subheadline":"max 10 words","body":"One investor sentence.","cta":"2-3 WORDS"},{"id":"elite","name":"Elite Lifestyle","mood":"Privacy prestige","headline":"MAX 5 WORDS CAPS","subheadline":"max 10 words","body":"One lifestyle sentence.","cta":"2-3 WORDS"}]}`;
+
+  try{
+    setStatus('Gemini crafting your 3 HNI campaigns...');
+    log('Sending brief to AI...');
+    const raw=await callGemini(key,prompt);
+    log('Response received. Parsing...');
+    let parsed;
+    try{
+      const clean=raw.replace(/```json|```/g,'').trim();
+      parsed=JSON.parse(clean);
+    }catch(e){
+      const match=raw.match(/\{[\s\S]*\}/);
+      if(match) parsed=JSON.parse(match[0]);
+      else throw new Error('Could not parse AI response. Please try again.');
+    }
+    campaigns=parsed.campaigns;
+    log('✓ 3 campaigns generated!');
+    setStatus('Done — review your campaigns');
+    setTimeout(()=>{buildReview();goStep(3);},500);
+  }catch(err){
+    setStatus('✗ Error');
+    log('Error: '+err.message);
+    log('Please go back and check your API key.');
+  }
+}
+
+function setStatus(m){document.getElementById('status-txt').textContent=m;}
+function log(m){const el=document.getElementById('ai-log');el.innerHTML+=m+'<br>';el.scrollTop=el.scrollHeight;}
+
+function buildReview(){
+  const grid=document.getElementById('camps-grid');grid.innerHTML='';
+  campaigns.forEach((c,i)=>{
+    const card=document.createElement('div');card.className='camp-card';
+    card.innerHTML=`
+      <div class="camp-hdr"><span class="camp-nm">${c.name}</span><span style="font-size:9px;color:var(--muted)">${c.mood}</span></div>
+      <div class="camp-hl" id="rvhl${i}">${c.headline}</div>
+      <div class="camp-sl" id="rvsl${i}">${c.subheadline}</div>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:.5rem" id="rvbd${i}">${c.body}</p>
+      <span class="camp-cta-badge" id="rvcta${i}">${c.cta}</span>
+      <div class="camp-edit-area">
+        <label>Headline</label><input type="text" value="${c.headline}" oninput="upd(${i},'headline',this.value)"/>
+        <label>Subheadline</label><input type="text" value="${c.subheadline}" oninput="upd(${i},'subheadline',this.value)"/>
+        <label>Body Copy</label><input type="text" value="${c.body}" oninput="upd(${i},'body',this.value)"/>
+        <label>CTA</label><input type="text" value="${c.cta}" oninput="upd(${i},'cta',this.value)"/>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function upd(i,f,v){
+  campaigns[i][f]=v;
+  const m={headline:'rvhl',subheadline:'rvsl',body:'rvbd',cta:'rvcta'};
+  if(m[f]) document.getElementById(m[f]+i).textContent=v;
+}
+
+function renderAds(){
+  goStep(4);
+  const tabRow=document.getElementById('tab-row'),tabPanels=document.getElementById('tab-panels');
+  tabRow.innerHTML='';tabPanels.innerHTML='';
+  CDEFS.forEach((def,ci)=>{
+    const c=campaigns[ci];
+    const tab=document.createElement('div');tab.className='tab'+(ci===0?' active':'');
+    tab.textContent=(ci+1)+'. '+def.name;
+    tab.onclick=()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');document.getElementById('tp'+ci).classList.add('active');
+    };
+    tabRow.appendChild(tab);
+    const panel=document.createElement('div');panel.className='tab-panel'+(ci===0?' active':'');panel.id='tp'+ci;
+    const row=document.createElement('div');row.className='sizes-row';
+    SIZES.forEach((sz,si)=>{
+      const wrap=document.createElement('div');wrap.className='ad-wrap';
+      const lbl=document.createElement('div');lbl.className='ad-lbl';lbl.textContent=sz.label;
+      const canvas=document.createElement('canvas');canvas.width=sz.w;canvas.height=sz.h;canvas.id=`cv${ci}${si}`;
+      const dlb=document.createElement('button');dlb.className='dl-btn';dlb.textContent='↓ Download '+sz.label;
+      dlb.onclick=()=>dlCanvas(canvas,`PM_${def.name.replace(/ /g,'_')}_${sz.w}x${sz.h}.png`);
+      wrap.appendChild(lbl);wrap.appendChild(canvas);wrap.appendChild(dlb);row.appendChild(wrap);
+      drawAd(canvas,def,c,sz);
+    });
+    panel.appendChild(row);tabPanels.appendChild(panel);
+  });
+}
+
+function dlCanvas(c,n){const a=document.createElement('a');a.download=n;a.href=c.toDataURL('image/png');a.click();}
+function dlAll(){CDEFS.forEach((d,ci)=>SIZES.forEach((s,si)=>{const c=document.getElementById(`cv${ci}${si}`);if(c)setTimeout(()=>dlCanvas(c,`PM_${d.name.replace(/ /g,'_')}_${s.w}x${s.h}.png`),(ci*3+si)*200);}));}
+function getPhone(city){if(city==='Gurugram')return '8888 00 1122';if(city==='Faridabad')return '8800 11 8001';return '8888 00 1122  |  8800 11 8001';}
+
+function drawAd(canvas,def,camp,sz){
+  const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const gr=ctx.createLinearGradient(0,0,W,H);gr.addColorStop(0,def.bg1);gr.addColorStop(1,def.bg2);
+  ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
+  const go=()=>{drawGeo(ctx,W,H,def.accent);drawContent(ctx,W,H,def,camp);};
+  if(uploadedImage){
+    const img=new Image();
+    img.onload=()=>{
+      const ir=img.width/img.height,cr=W/H;let iw,ih,ix,iy;
+      if(ir>cr){ih=H;iw=H*ir;ix=(W-iw)/2;iy=0;}else{iw=W;ih=W/ir;ix=0;iy=(H-ih)/2;}
+      ctx.globalAlpha=0.28;ctx.drawImage(img,ix,iy,iw,ih);ctx.globalAlpha=1;go();
+    };img.src=uploadedImage;
+  }else go();
+}
+
+function drawGeo(ctx,W,H,gold){
+  ctx.save();ctx.globalAlpha=0.04;
+  for(let i=0;i<6;i++){ctx.strokeStyle=gold;ctx.lineWidth=0.5;ctx.beginPath();ctx.rect(W*.08+i*W*.025,H*.08+i*H*.025,W*.84-i*W*.05,H*.84-i*H*.05);ctx.stroke();}
+  ctx.globalAlpha=0.05;ctx.strokeStyle=gold;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(W*.65,0);ctx.lineTo(W,H*.42);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,H*.58);ctx.lineTo(W*.35,H);ctx.stroke();
+  ctx.globalAlpha=0.06;ctx.beginPath();ctx.arc(W*.78,H*.3,H*.22,0,Math.PI*2);ctx.stroke();
+  ctx.restore();
+}
+
+function drawContent(ctx,W,H,def,camp){
+  const gold=def.accent,pad=W*.09,portrait=H>W;
+  ctx.fillStyle=gold;ctx.fillRect(pad,pad,W*.1,2);
+  const lY=pad+W*.03;
+  ctx.fillStyle=gold;ctx.font=`500 ${W*.02}px Montserrat,sans-serif`;ctx.fillText('PROPERTY MASTER',pad,lY);
+  ctx.fillStyle='rgba(201,169,110,0.42)';ctx.font=`300 ${W*.011}px Montserrat,sans-serif`;ctx.fillText('PERSONAL  ·  PROFESSIONAL  ·  PROMPT',pad,lY+W*.021);
+  const midY=portrait?H*.37:H*.39;
+  ctx.fillStyle='rgba(201,169,110,0.09)';ctx.fillRect(pad,midY-W*.063,W*.52,W*.032);
+  ctx.fillStyle=gold;ctx.font=`400 ${W*.013}px Montserrat,sans-serif`;ctx.fillText((camp.name||'').toUpperCase(),pad+W*.022,midY-W*.042);
+  const hl=camp.headline||'LUXURY AWAITS',hlSz=portrait?W*.071:W*.061;
+  ctx.font=`300 ${hlSz}px "Cormorant Garamond",serif`;
+  const words=hl.split(' '),lines=[''];
+  words.forEach(w=>{const t=(lines[lines.length-1]+' '+w).trim();if(ctx.measureText(t).width>W*.78&&lines[lines.length-1])lines.push(w);else lines[lines.length-1]=t;});
+  ctx.fillStyle='#F0EAE0';lines.forEach((ln,i)=>ctx.fillText(ln,pad,midY+i*(hlSz*1.22)));
+  const subY=midY+lines.length*(hlSz*1.22)+W*.02;
+  ctx.fillStyle='rgba(240,234,224,0.48)';ctx.font=`300 ${W*.017}px Montserrat,sans-serif`;ctx.fillText(camp.subheadline||'',pad,subY);
+  ctx.fillStyle=gold;ctx.globalAlpha=.32;ctx.fillRect(pad,subY+W*.022,W*.16,1);ctx.globalAlpha=1;
+  const projY=subY+W*.065;
+  ctx.fillStyle='#F0EAE0';ctx.font=`600 ${W*.035}px Montserrat,sans-serif`;ctx.fillText(proj.project||'',pad,projY);
+  ctx.fillStyle='rgba(240,234,224,0.48)';ctx.font=`300 ${W*.015}px Montserrat,sans-serif`;ctx.fillText(`${proj.asset}  ·  ${proj.location}`,pad,projY+W*.03);
+  if(proj.usp){ctx.fillStyle='rgba(240,234,224,0.32)';ctx.font=`300 ${W*.013}px Montserrat,sans-serif`;ctx.fillText(proj.usp,pad,projY+W*.051);}
+  const prY=H-W*.285;
+  ctx.fillStyle=gold;ctx.fillRect(pad,prY,W*.004,W*.065);
+  ctx.fillStyle='rgba(201,169,110,0.07)';ctx.fillRect(pad+W*.01,prY-W*.01,W*.48,W*.085);
+  ctx.fillStyle='rgba(240,234,224,0.42)';ctx.font=`300 ${W*.012}px Montserrat,sans-serif`;ctx.fillText('STARTING FROM',pad+W*.025,prY+W*.021);
+  ctx.fillStyle=gold;ctx.font=`500 ${W*.035}px Montserrat,sans-serif`;ctx.fillText(proj.price||'',pad+W*.025,prY+W*.056);
+  const ctaY=H-W*.165,ctaTxt=(camp.cta||'ENQUIRE NOW').toUpperCase();
+  ctx.strokeStyle=gold;ctx.lineWidth=1;ctx.strokeRect(pad,ctaY,W*.34,W*.048);
+  ctx.fillStyle=gold;ctx.font=`500 ${W*.013}px Montserrat,sans-serif`;ctx.fillText(ctaTxt,pad+W*.016,ctaY+W*.029);
+  const ftY=H-W*.055;
+  ctx.fillStyle='rgba(201,169,110,0.22)';ctx.fillRect(pad,ftY-W*.018,W-pad*2,.5);
+  ctx.fillStyle='rgba(240,234,224,0.3)';ctx.font=`300 ${W*.012}px Montserrat,sans-serif`;ctx.fillText('www.propertymaster.com   |   Gurugram   |   Faridabad',pad,ftY);
+  const phone=getPhone(proj.city||'Faridabad');
+  ctx.fillStyle=gold;ctx.font=`400 ${W*.013}px Montserrat,sans-serif`;ctx.fillText(phone,W-pad-ctx.measureText(phone).width,ftY);
+}
+</script>
+</body>
+</html>
